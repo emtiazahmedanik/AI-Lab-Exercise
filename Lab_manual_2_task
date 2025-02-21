@@ -1,0 +1,100 @@
+import java.util.*;
+
+public class BFSGrid {
+    static int N;
+    static int[][] grid;
+    
+    // Movement directions: (dx, dy) and corresponding names
+    static final int[] dx = {-1, 1, 0, 0}; // Up, Down, Left, Right
+    static final int[] dy = {0, 0, -1, 1}; 
+    static final String[] directions = {"Up", "Down", "Left", "Right"}; 
+
+    // Function to generate an N×N grid with random obstacles
+    static void generateGrid() {
+        Random rand = new Random();
+        grid = new int[N][N];
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                grid[i][j] = rand.nextInt(5) == 0 ? 1 : 0; // 20% chance of obstacle (1)
+            }
+        }
+    }
+
+    // Function to print the grid
+    static void printGrid() {
+        System.out.println("\nGenerated Grid:");
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                System.out.print((grid[i][j] == 1 ? "█" : ".") + " "); // '█' represents obstacles
+            }
+            System.out.println();
+        }
+    }
+
+    // BFS function for 2D grid traversal with movement directions
+    static void BFS(int startX, int startY, int goalX, int goalY) {
+        if (grid[startX][startY] == 1 || grid[goalX][goalY] == 1) {
+            System.out.println("Start or goal position is on an obstacle! Choose different positions.");
+            return;
+        }
+
+        boolean[][] visited = new boolean[N][N]; // Track visited nodes
+        Queue<int[]> queue = new LinkedList<>();
+        visited[startX][startY] = true;
+        queue.add(new int[]{startX, startY});
+
+        System.out.println("\nBFS Traversal with Moves:");
+
+        while (!queue.isEmpty()) {
+            int[] node = queue.poll();
+            int x = node[0], y = node[1];
+
+            // Stop BFS if we reach the goal
+            if (x == goalX && y == goalY) {
+                System.out.println("Goal reached at (" + x + ", " + y + ")!");
+                return;
+            }
+
+            // Explore all 4 possible movements
+            for (int i = 0; i < 4; i++) {
+                int newX = x + dx[i];
+                int newY = y + dy[i];
+
+                // Check if inside bounds and not an obstacle
+                if (newX >= 0 && newX < N && newY >= 0 && newY < N && grid[newX][newY] == 0 && !visited[newX][newY]) {
+                    visited[newX][newY] = true;
+                    queue.add(new int[]{newX, newY});
+                    System.out.println("Moving " + directions[i] + " -> (" + newX + ", " + newY + ")");
+                }
+            }
+        }
+        System.out.println("No path found.");
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Take user input for grid size
+        System.out.print("Enter grid size (N): ");
+        N = scanner.nextInt();
+
+        // Generate the grid with obstacles
+        generateGrid();
+        printGrid();
+
+        // Take user input for start and goal positions
+        System.out.print("Enter start position (x y): ");
+        int startX = scanner.nextInt();
+        int startY = scanner.nextInt();
+
+        System.out.print("Enter goal position (x y): ");
+        int goalX = scanner.nextInt();
+        int goalY = scanner.nextInt();
+
+        // Perform BFS traversal with movement tracking
+        BFS(startX, startY, goalX, goalY);
+
+        scanner.close();
+    }
+}
