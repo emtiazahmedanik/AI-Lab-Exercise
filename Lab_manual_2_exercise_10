@@ -1,0 +1,73 @@
+import java.util.*;
+
+public class BFSTraversel {
+    static final int SIZE = 6; // Number of vertices
+
+    static void BFS(int[][] graph, int start, int destination) {
+        boolean[] visited = new boolean[SIZE]; // Track visited nodes
+        int[] parent = new int[SIZE]; // Store parent information for path tracking
+        Arrays.fill(parent, -1); // Initialize parent array with -1 (no parent)
+
+        Queue<Integer> queue = new LinkedList<>();
+        visited[start] = true;
+        queue.add(start);
+
+        System.out.println("BFS Traversal (from " + start + " to " + destination + "): ");
+
+        boolean found = false; // Flag to check if destination is reached
+
+        while (!queue.isEmpty()) {
+            int node = queue.poll();
+            System.out.print(node + " ");
+
+            // Stop BFS if we reach the destination
+            if (node == destination) {
+                found = true;
+                break;
+            }
+
+            // Visit all adjacent nodes
+            for (int i = 0; i < SIZE; i++) {
+                if (graph[node][i] == 1 && !visited[i]) {
+                    visited[i] = true;
+                    queue.add(i);
+                    parent[i] = node; // Store parent information
+                }
+            }
+        }
+        System.out.println();
+
+        // Print shortest path if destination was found
+        if (found) {
+            System.out.print("Shortest Path from " + start + " to " + destination + ": ");
+            printPath(parent, destination);
+            System.out.println();
+        } else {
+            System.out.println("No path exists from " + start + " to " + destination);
+        }
+    }
+
+    // Recursive function to print path from start to given node
+    static void printPath(int[] parent, int node) {
+        if (parent[node] == -1) { // Base case: If no parent, it's the start node
+            System.out.print(node);
+            return;
+        }
+        printPath(parent, parent[node]); // Recursively print previous node
+        System.out.print(" -> " + node); // Print current node
+    }
+
+    public static void main(String[] args) {
+        int[][] graph = {
+            {0, 1, 0, 0, 1, 0}, 
+            {1, 0, 1, 1, 1, 0}, 
+            {0, 1, 0, 1, 0, 0}, 
+            {0, 1, 1, 0, 1, 0}, 
+            {1, 0, 0, 1, 0, 1},
+            {0, 0, 0, 0, 1, 0} 
+        };
+
+        int start = 0, destination = 4;
+        BFS(graph, start, destination);  // Start BFS from node 0 to node 5
+    }
+}
